@@ -1,0 +1,49 @@
+---
+/**
+ * Icon-only theme toggle: Preline's "button toggle" pattern, two buttons that
+ * each set one theme and swap visibility with the `.dark` class on <html>.
+ * The moon shows in light mode, the sun in dark.
+ *
+ * Only one of the two is ever shown, so `aria-pressed` can be static.
+ */
+import Icon from "./Icon.astro";
+
+const button =
+  "hs-dark-mode size-9.5 items-center justify-center rounded-full border border-primary-line bg-primary text-primary-foreground hover:bg-primary-hover focus:bg-primary-focus";
+---
+
+<div class="flex" data-theme-toggle>
+  <button
+    type="button"
+    class:list={[button, "hs-dark-mode-active:hidden flex"]}
+    data-hs-theme-click-value="dark"
+    aria-label="Toggle dark mode"
+    aria-pressed="false"
+  >
+    <Icon name="moon" class="size-4 shrink-0" />
+  </button>
+  <button
+    type="button"
+    class:list={[button, "hs-dark-mode-active:flex hidden"]}
+    data-hs-theme-click-value="light"
+    aria-label="Toggle dark mode"
+    aria-pressed="true"
+  >
+    <Icon name="sun" class="size-4 shrink-0" />
+  </button>
+</div>
+
+<script>
+  // The clicked button hides itself, which would drop keyboard focus. Hand it to its twin.
+  document.querySelectorAll<HTMLElement>("[data-theme-toggle]").forEach((toggle) => {
+    toggle.addEventListener("click", (event) => {
+      const clicked = (event.target as Element).closest("button");
+      if (!clicked || document.activeElement !== clicked) return;
+
+      requestAnimationFrame(() => {
+        const twin = [...toggle.querySelectorAll("button")].find((button) => button !== clicked);
+        twin?.focus();
+      });
+    });
+  });
+</script>

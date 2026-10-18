@@ -1,0 +1,25 @@
+/*
+ * Where stock Moon differs from reference-light.png / reference-dark.png.
+ * Imported last. The selectors carry the same weight as Moon's own, so these
+ * win on source order.
+ *
+ * Every other sampled color already is a stock token: page, navbar and card
+ * fills (#ffffff / #262626), borders (#e5e7eb / #404040) and the three text
+ * tones (#1e2939, #4a5565, #6a7282 / #e5e5e5, #d4d4d4, #a1a1a1). Only the
+ * primary color is off: the reference's pill and active underline are
+ * stone-800 (#292524), where Moon uses gray-800 (#1e2939).
+ */
+
+/* Light. `:not(.dark)` keeps this from overriding Moon's white dark-mode primary. */
+[data-theme="theme-moon"]:not(.dark) {
+  --primary: var(--color-stone-800);
+  --primary-hover: var(--color-stone-900);
+  --primary-focus: var(--color-stone-900);
+  --primary-active: var(--color-stone-900);
+  --primary-checked: var(--color-stone-800);
+}
+
+/* Dark: the pill is white already; its label is the same stone-800. */
+[data-theme="theme-moon"].dark {
+  --primary-foreground: var(--color-stone-800);
+}

@@ -1,0 +1,14 @@
+---
+import { profile } from "../data/profile";
+import Container from "./Container.astro";
+
+const year = new Date().getFullYear();
+---
+
+<footer>
+  <Container>
+    <div class="mt-14 border-t py-6 text-center text-xs">
+      <p>© {year} {profile.name}</p>
+    </div>
+  </Container>
+</footer>

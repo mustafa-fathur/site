@@ -1,0 +1,85 @@
+[
+  {
+    "title": "Image embeds",
+    "description": "Every way to put an image in a note, from Obsidian's wikilink embeds to plain Markdown and external URLs.",
+    "date": "2026-09-20",
+    "tags": [
+      "obsidian",
+      "images",
+      "test"
+    ],
+    "lang": "en",
+    "slug": "image-embeds"
+  },
+  {
+    "title": "PDF embeds",
+    "description": "Embedding PDF files with a page number, a fixed height, or both, rendered by PDF.js instead of the browser's viewer.",
+    "date": "2026-09-12",
+    "tags": [
+      "obsidian",
+      "pdf",
+      "test"
+    ],
+    "lang": "en",
+    "slug": "pdf-embeds"
+  },
+  {
+    "title": "Embed video dan audio",
+    "description": "Menyematkan berkas video dan audio dari vault dengan pemutar bawaan browser, tanpa JavaScript tambahan.",
+    "date": "2026-08-30",
+    "tags": [
+      "obsidian",
+      "media",
+      "test"
+    ],
+    "lang": "id",
+    "slug": "embed-video-dan-audio"
+  },
+  {
+    "title": "YouTube and Google Drive",
+    "description": "Embedding hosted video and files by writing an image with a URL, without loading third-party players until they are needed.",
+    "date": "2026-08-14",
+    "tags": [
+      "obsidian",
+      "embeds",
+      "test"
+    ],
+    "lang": "en",
+    "slug": "youtube-and-google-drive"
+  },
+  {
+    "title": "Obsidian syntax kitchen sink",
+    "description": "Wikilinks, note embeds, callouts, tables, task lists, footnotes and code blocks on one page, to check that each renders as intended.",
+    "date": "2026-07-02",
+    "tags": [
+      "obsidian",
+      "markdown",
+      "test"
+    ],
+    "lang": "en",
+    "slug": "obsidian-syntax-kitchen-sink"
+  },
+  {
+    "title": "Deploy aplikasi container ke Cloud Run",
+    "description": "Dari Dockerfile sampai URL publik. Membangun image dengan Cloud Build, menyimpannya di Artifact Registry, lalu menjalankannya di Cloud Run tanpa mengurus server.",
+    "date": "2025-11-18",
+    "tags": [
+      "google-cloud",
+      "cloud-run",
+      "docker"
+    ],
+    "lang": "id",
+    "slug": "guides/deploy-aplikasi-container-ke-cloud-run"
+  },
+  {
+    "title": "About this blog",
+    "description": "Why these posts are written as Obsidian notes, and what that changes about how the site is built.",
+    "date": "2025-10-04",
+    "tags": [
+      "meta",
+      "obsidian"
+    ],
+    "lang": "en",
+    "slug": "about-this-blog"
+  }
+]

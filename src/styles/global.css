@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+/* Preline UI, per https://preline.co/docs/frameworks-astro.html */
+@import "preline/variants.css";
+@source "../../node_modules/preline/dist/*.js";
+
+/* Plugins */
+/* @plugin "@tailwindcss/forms"; */ /* not installed: the site has no forms yet */
+
+/*
+ * Preline themes: base tokens first, then Moon, which <html data-theme="theme-moon">
+ * switches on. preline@5 no longer ships the predefined themes, so moon.css is
+ * the official file vendored unmodified from preline@4.2.0 (css/themes/moon.css).
+ */
+@import "preline/theme.css";
+@import "./themes/moon.css";
+/* Last: the few tokens where Moon differs from the reference screenshots. */
+@import "./theme-overrides.css";
+
+/* Dark mode follows the `.dark` class that Preline's theme switch puts on <html>. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Font style "Sans": Inter, self-hosted through Fontsource (imported in Base.astro). */
+  --font-sans:
+    "Inter Variable", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  .dark {
+    color-scheme: dark;
+  }
+
+  /* Adds pointer cursor to buttons */
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  /*
+   * The navbar floats over the page: sticky, 4rem tall including the gap above
+   * it. Anything scrolled to by its id (`/#contact`, `/work#<slug>`) stops a
+   * little below the bar instead of underneath it.
+   */
+  main [id] {
+    scroll-margin-top: 5rem;
+  }
+
+  /* One focus ring for every interactive element, in the theme's primary color. */
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}

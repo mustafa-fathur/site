@@ -1,0 +1,53 @@
+---
+import "@fontsource-variable/inter";
+import "../styles/global.css";
+import interUrl from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
+import ButtonLink from "../components/ButtonLink.astro";
+import { profile } from "../data/profile";
+
+const pageTitle = `Page not found · ${profile.name}`;
+---
+
+<!doctype html>
+<html lang="en" data-theme="theme-moon">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <script is:inline>
+      const html = document.querySelector('html');
+      const isLightOrAuto = localStorage.getItem('hs_theme') === 'light' || (localStorage.getItem('hs_theme') === 'auto' && !window.matchMedia('(prefers-color-scheme: dark)').matches);
+      const isDarkOrAuto = localStorage.getItem('hs_theme') === 'dark' || (localStorage.getItem('hs_theme') === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+      if (isLightOrAuto && html.classList.contains('dark')) html.classList.remove('dark');
+      else if (isDarkOrAuto && html.classList.contains('light')) html.classList.remove('light');
+      else if (isDarkOrAuto && !html.classList.contains('dark')) html.classList.add('dark');
+      else if (isLightOrAuto && !html.classList.contains('light')) html.classList.add('light');
+
+      if (!localStorage.getItem('hs_theme') && window.matchMedia('(prefers-color-scheme: dark)').matches) html.classList.add('dark');
+    </script>
+
+    <title>{pageTitle}</title>
+    <meta name="description" content="This page does not exist." />
+    <meta name="robots" content="noindex" />
+
+    <link rel="preload" href={interUrl} as="font" type="font/woff2" crossorigin />
+  </head>
+  <body class="bg-background text-sm text-muted-foreground-2 antialiased">
+    <main class="flex min-h-dvh flex-col items-center justify-center px-4 py-12 text-center sm:px-6">
+      <p class="text-7xl font-bold tracking-tight text-foreground sm:text-9xl">404</p>
+      <h1 class="mt-4 text-lg font-medium text-foreground sm:text-xl">Page not found</h1>
+      <p class="mt-2 max-w-sm text-muted-foreground-1">
+        The page you are looking for does not exist or has been moved.
+      </p>
+      <div class="mt-6 flex w-full max-w-xs flex-col justify-center gap-2 sm:w-auto sm:max-w-none sm:flex-row">
+        <ButtonLink href="/" variant="primary" size="sm" pill class="w-full sm:w-auto">
+          Back to home
+        </ButtonLink>
+        <ButtonLink href="/work" variant="white" size="sm" pill class="w-full sm:w-auto">
+          See my work
+        </ButtonLink>
+      </div>
+    </main>
+  </body>
+</html>

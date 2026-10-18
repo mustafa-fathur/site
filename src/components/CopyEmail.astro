@@ -1,0 +1,82 @@
+---
+/**
+ * "Copy email" button. The Preline tooltip shows the address on hover and
+ * focus, and flips to "Copied!" after a click.
+ */
+import { button } from "../lib/ui";
+import Icon from "./Icon.astro";
+
+interface Props {
+  email: string;
+}
+
+const { email } = Astro.props;
+---
+
+<div class="hs-tooltip inline-block [--placement:top]" data-copy-email>
+  <button type="button" class:list={["hs-tooltip-toggle", button()]} data-copy={email}>
+    <Icon name="copy" class="size-4 shrink-0" />
+    Copy email
+  </button>
+  {/* Starts `hidden`, the state Preline itself leaves a closed tooltip in, so it cannot widen the page. */}
+  <span
+    class="hs-tooltip-content hs-tooltip-shown:visible hs-tooltip-shown:opacity-100 invisible absolute z-10 hidden rounded-md border border-tooltip-line bg-tooltip px-2 py-1 text-xs font-medium whitespace-nowrap text-tooltip-foreground opacity-0 shadow-2xs transition-opacity"
+    role="tooltip"
+  >
+    {email}
+  </span>
+  <span class="sr-only" role="status" data-copy-status></span>
+</div>
+
+<script>
+  const SHOWN_MS = 1600;
+
+  async function copy(text: string): Promise<boolean> {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      // No async clipboard, e.g. on plain http from a LAN address: copy a selection instead.
+      const field = document.createElement("textarea");
+      field.value = text;
+      field.readOnly = true;
+      field.style.cssText = "position:fixed;opacity:0";
+      document.body.append(field);
+      field.select();
+      const copied = document.execCommand("copy");
+      field.remove();
+      return copied;
+    }
+  }
+
+  document.querySelectorAll<HTMLElement>("[data-copy-email]").forEach((root) => {
+    const trigger = root.querySelector<HTMLButtonElement>("button[data-copy]");
+    const tip = root.querySelector<HTMLElement>(".hs-tooltip-content");
+    const status = root.querySelector<HTMLElement>("[data-copy-status]");
+    if (!trigger || !tip) return;
+
+    const idle = tip.textContent ?? "";
+    let timer: number | undefined;
+
+    trigger.addEventListener("click", async () => {
+      const copied = await copy(trigger.dataset.copy ?? "");
+      tip.textContent = copied ? "Copied!" : "Copy failed";
+      if (status) status.textContent = copied ? "Email address copied." : "Could not copy the email address.";
+
+      // Touch screens never hover, so open the tooltip explicitly, then put it away again.
+      const { HSTooltip } = await import("preline/non-auto");
+      HSTooltip.show(root);
+      trigger.style.outline = ""; // show() hides the focus ring; keep it for keyboard users
+
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        HSTooltip.hide(root);
+        // Swap the text back once the fade-out is over.
+        timer = window.setTimeout(() => {
+          tip.textContent = idle;
+          if (status) status.textContent = "";
+        }, 200);
+      }, SHOWN_MS);
+    });
+  });
+</script>

@@ -1,0 +1,26 @@
+---
+/**
+ * Logo of a company, school or programme, shown as it is. Pass any image in
+ * `public/`. `sm` (24px) marks a timeline entry, `md` (40px) heads a card.
+ */
+interface Props {
+  src: string;
+  /** Leave empty when the name is printed next to the logo, which is the usual case. */
+  alt?: string;
+  size?: "sm" | "md";
+  class?: string;
+}
+
+const { src, alt = "", size = "sm", class: className } = Astro.props;
+const px = size === "md" ? 40 : 24;
+---
+
+<img
+  src={src}
+  alt={alt}
+  width={px}
+  height={px}
+  loading="lazy"
+  decoding="async"
+  class:list={["shrink-0 object-contain", size === "md" ? "size-10" : "size-6", className]}
+/>

@@ -1,0 +1,140 @@
+---
+import "@fontsource-variable/inter";
+import "../styles/global.css";
+import interUrl from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
+import Container from "../components/Container.astro";
+import Footer from "../components/Footer.astro";
+import Navbar from "../components/Navbar.astro";
+import { SITE_URL } from "../config";
+import { education, links, profile, skills } from "../data/profile";
+
+interface Props {
+  /** Page name. Left out on the home page, which uses the name and role. */
+  title?: string;
+  description?: string;
+  /** Keep the page out of search results (the 404 page). */
+  noindex?: boolean;
+}
+
+const { title, description = profile.description, noindex = false } = Astro.props;
+const isHome = !title;
+const pageTitle = title ? `${title} · ${profile.name}` : `${profile.name} · ${profile.role}`;
+
+// Open Graph requires absolute URLs, so these stay unset until SITE_URL is filled in.
+const canonical = SITE_URL && !noindex ? new URL(Astro.url.pathname, SITE_URL).href : undefined;
+
+const personSchema = {
+  "@type": "Person",
+  name: profile.name,
+  alternateName: profile.brand,
+  jobTitle: profile.role,
+  description: profile.description,
+  email: profile.email,
+  ...(SITE_URL ? { url: SITE_URL } : {}),
+  sameAs: [links.linkedin.href, links.github.href],
+  alumniOf: education.map((item) => ({
+    "@type": "EducationalOrganization",
+    name: item.school,
+  })),
+  knowsAbout: skills
+    .filter((group) => group.label !== "Languages")
+    .flatMap((group) => group.items),
+  knowsLanguage: ["id", "en"],
+};
+
+const jsonLd = isHome
+  ? {
+      "@context": "https://schema.org",
+      "@type": "ProfilePage",
+      ...(canonical ? { url: canonical } : {}),
+      name: pageTitle,
+      description,
+      mainEntity: personSchema,
+    }
+  : {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      ...(canonical ? { url: canonical } : {}),
+      name: pageTitle,
+      description,
+      author: personSchema,
+    };
+---
+
+<!doctype html>
+<html lang="en" data-theme="theme-moon">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    {/* Preline's theme-switch snippet. It must run before first paint, so the page never flashes the wrong theme. */}
+    <script is:inline>
+      const html = document.querySelector('html');
+      const isLightOrAuto = localStorage.getItem('hs_theme') === 'light' || (localStorage.getItem('hs_theme') === 'auto' && !window.matchMedia('(prefers-color-scheme: dark)').matches);
+      const isDarkOrAuto = localStorage.getItem('hs_theme') === 'dark' || (localStorage.getItem('hs_theme') === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+      if (isLightOrAuto && html.classList.contains('dark')) html.classList.remove('dark');
+      else if (isDarkOrAuto && html.classList.contains('light')) html.classList.remove('light');
+      else if (isDarkOrAuto && !html.classList.contains('dark')) html.classList.add('dark');
+      else if (isLightOrAuto && !html.classList.contains('light')) html.classList.add('light');
+
+      // Added to Preline's snippet: until the visitor picks a theme, follow the OS preference.
+      if (!localStorage.getItem('hs_theme') && window.matchMedia('(prefers-color-scheme: dark)').matches) html.classList.add('dark');
+    </script>
+
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={profile.name} />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#262626" />
+    {canonical && <link rel="canonical" href={canonical} />}
+    <link rel="sitemap" href="/sitemap.xml" />
+    <link rel="preload" href={interUrl} as="font" type="font/woff2" crossorigin />
+
+    <meta property="og:type" content={isHome ? "profile" : "website"} />
+    <meta property="og:site_name" content={profile.name} />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    {
+      isHome && (
+        <>
+          <meta property="profile:first_name" content="Mustafa Fathur" />
+          <meta property="profile:last_name" content="Rahman" />
+          <meta property="profile:username" content="mustafa-fathur" />
+        </>
+      )
+    }
+    {canonical && <meta property="og:url" content={canonical} />}
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+
+    {!noindex && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+  </head>
+  <body class="bg-background text-sm text-muted-foreground-2 antialiased">
+    <a
+      href="#main"
+      class="sr-only rounded-lg bg-primary text-sm font-medium text-primary-foreground focus:not-sr-only focus:fixed focus:inset-s-3 focus:top-3 focus:z-60 focus:px-3 focus:py-2"
+    >
+      Skip to content
+    </a>
+
+    <div class="flex min-h-dvh flex-col">
+      <Navbar />
+      <main id="main" class="grow">
+        <Container>
+          <slot />
+        </Container>
+      </main>
+      <Footer />
+    </div>
+
+    <script>
+      import "../scripts/preline.ts";
+    </script>
+  </body>
+</html>

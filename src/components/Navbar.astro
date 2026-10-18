@@ -1,0 +1,96 @@
+---
+/**
+ * Preline's free "Minimal Floating Navbar" block:
+ * https://preline.co/blocks/marketing/floating-headers/#minimal-floating-navbar
+ *
+ * Structure and classes follow the block. What differs from it:
+ * - only the current route gets `aria-current="page"` and the border indicator;
+ * - the block's two dead link classes are replaced (see `link` below);
+ * - `focus:outline-hidden` is left out everywhere, so the site-wide
+ *   `:focus-visible` ring from global.css stays visible for keyboard users;
+ * - `sm:px-2` on the header: the block swaps `mx-2` for `sm:mx-auto`, which
+ *   leaves the bar flush against both screen edges between 640 and 688px.
+ */
+import { profile } from "../data/profile";
+import Icon from "./Icon.astro";
+import ThemeToggle from "./ThemeToggle.astro";
+
+const { pathname } = Astro.url;
+const home = pathname === "/";
+/** True on `base` itself and on anything nested under it. */
+const under = (base: string) => pathname === base || pathname.startsWith(`${base}/`);
+
+const nav = [
+  { label: "About", href: "/", current: home },
+  { label: "Work", href: "/work", current: under("/work") },
+  { label: "Blog", href: "#blog", current: under("/blog") },
+];
+
+// Left border on mobile, bottom border from `md`. The block ships
+// `hover:text-navbar-nav-foreground-hover` (no such token in Preline's theme) and
+// `focus:navbar-nav-focus` (not a utility); both become the full-strength text color.
+const link =
+  "py-0.5 md:py-3 px-4 md:px-1 border-s-2 md:border-s-0 md:border-b-2 hover:text-navbar-nav-foreground focus:text-navbar-nav-foreground";
+const linkCurrent = "border-primary text-navbar-nav-foreground";
+const linkIdle = "border-transparent text-navbar-nav-foreground/80";
+---
+
+<header class="sticky top-0 inset-x-0 flex flex-wrap md:justify-start md:flex-nowrap z-50 w-full text-sm sm:px-2">
+  <nav
+    aria-label="Main"
+    class="mt-4 relative max-w-2xl w-full bg-navbar border border-navbar-line rounded-3xl mx-2 flex flex-wrap md:flex-nowrap items-center justify-between p-1 ps-4 md:py-0 sm:mx-auto"
+  >
+    <div class="flex items-center">
+      <a
+        class="flex-none rounded-md text-lg inline-block font-semibold tracking-tight text-foreground focus:opacity-80"
+        href="/"
+        aria-label={`${profile.brand} – home`}
+      >
+        {profile.brand}
+      </a>
+    </div>
+
+    {/* Actions: one group for every breakpoint, moved after the links from `md`. */}
+    <div class="flex items-center gap-1 md:order-4 md:ms-4">
+      <ThemeToggle />
+
+      <div class="md:hidden">
+        <button
+          type="button"
+          class="hs-collapse-toggle flex justify-center items-center size-9.5 bg-layer border border-layer-line text-muted-foreground-1 rounded-full hover:bg-muted-hover focus:bg-muted-focus"
+          id="site-nav-toggle"
+          aria-expanded="false"
+          aria-controls="site-nav"
+          aria-label="Toggle navigation"
+          data-hs-collapse="#site-nav"
+        >
+          <Icon name="menu" class="hs-collapse-open:hidden shrink-0 size-3.5" />
+          <Icon name="close" class="hs-collapse-open:block hidden shrink-0 size-4" />
+        </button>
+      </div>
+    </div>
+
+    <div
+      id="site-nav"
+      class="hidden hs-collapse overflow-hidden transition-all duration-300 basis-full grow md:block"
+      aria-labelledby="site-nav-toggle"
+      role="region"
+    >
+      <div
+        class="flex flex-col md:flex-row md:items-center md:justify-end gap-2 md:gap-3 mt-3 md:mt-0 py-2 md:py-0 md:ps-7"
+      >
+        {
+          nav.map((item) => (
+            <a
+              class:list={[link, item.current ? linkCurrent : linkIdle]}
+              href={item.href}
+              aria-current={item.current ? "page" : undefined}
+            >
+              {item.label}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </nav>
+</header>

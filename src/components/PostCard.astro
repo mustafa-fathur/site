@@ -1,0 +1,59 @@
+---
+import { formatDate, postUrl, type Post } from "../data/posts";
+import { link } from "../lib/ui";
+import PostThumb from "./PostThumb.astro";
+
+interface Props {
+  post: Post;
+  /**
+   * `compact`: year, title, one line of description. For the home page.
+   * `full`: adds the thumbnail, the full date, language and tags. For `/blog`.
+   */
+  variant?: "compact" | "full";
+  headingLevel?: 2 | 3;
+}
+
+const { post, variant = "compact", headingLevel = 3 } = Astro.props;
+const Heading = `h${headingLevel}` as const;
+const full = variant === "full";
+const languages = { en: "English", id: "Indonesian" };
+---
+
+<article class:list={[full && "flex gap-x-4"]}>
+  {full && <PostThumb seed={post.slug} class="aspect-5/4 w-20 shrink-0 rounded-lg sm:w-28" />}
+
+  <div class="min-w-0 grow">
+    <p class="text-muted-foreground-1">
+      <time datetime={post.date}>{full ? formatDate(post.date) : post.date.slice(0, 4)}</time>
+      {
+        full && (
+          <>
+            <span aria-hidden="true"> · {post.lang.toUpperCase()}</span>
+            <span class="sr-only">, written in {languages[post.lang]}</span>
+          </>
+        )
+      }
+    </p>
+
+    <Heading class="mt-2 font-medium text-foreground" lang={post.lang}>{post.title}</Heading>
+
+    <p class:list={["mt-1 text-muted-foreground-1", full ? "line-clamp-2" : "truncate"]} lang={post.lang}>
+      {post.description}
+    </p>
+
+    {
+      full && post.tags.length > 0 && (
+        <p class="mt-1.5 text-xs text-muted-foreground-1">
+          <span class="sr-only">Tags: </span>
+          {post.tags.map((tag) => `#${tag}`).join(" ")}
+        </p>
+      )
+    }
+
+    <p class="mt-1.5">
+      <a href={postUrl(post)} class={link}>
+        Continue reading<span class="sr-only">: {post.title}</span>
+      </a>
+    </p>
+  </div>
+</article>

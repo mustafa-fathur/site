@@ -1,0 +1,21 @@
+---
+interface Props {
+  title: string;
+  /** Anchor id of the section. Defaults to a slug of the title. */
+  id?: string;
+}
+
+const { title } = Astro.props;
+const id =
+  Astro.props.id ??
+  title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+const headingId = `${id}-heading`;
+---
+
+<section id={id} aria-labelledby={headingId} class="mt-14">
+  <h2 id={headingId} class="mb-5 text-base font-medium text-foreground">{title}</h2>
+  <slot />
+</section>
