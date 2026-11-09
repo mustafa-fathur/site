@@ -9,7 +9,7 @@
 import Icon from "./Icon.astro";
 
 const button =
-  "hs-dark-mode size-9.5 items-center justify-center rounded-full border border-primary-line bg-primary text-primary-foreground hover:bg-primary-hover focus:bg-primary-focus";
+  "hs-dark-mode size-9.5 items-center justify-center rounded-full text-navbar-nav-foreground/80 transition-colors hover:bg-muted-hover hover:text-navbar-nav-foreground focus:bg-muted-focus focus:text-navbar-nav-foreground";
 ---
 
 <div class="flex" data-theme-toggle>
@@ -20,7 +20,7 @@ const button =
     aria-label="Toggle dark mode"
     aria-pressed="false"
   >
-    <Icon name="moon" class="size-4 shrink-0" />
+    <Icon name="moon" class="size-3.5 shrink-0 -translate-y-px" />
   </button>
   <button
     type="button"
@@ -29,7 +29,7 @@ const button =
     aria-label="Toggle dark mode"
     aria-pressed="true"
   >
-    <Icon name="sun" class="size-4 shrink-0" />
+    <Icon name="sun" class="size-3.5 shrink-0 -translate-y-px" />
   </button>
 </div>
 

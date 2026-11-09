@@ -63,12 +63,9 @@ export const profile = {
   role: "Cloud Engineer / Backend Developer",
   email: "mustafa.fathur@gmail.com",
   /** CV summary, one entry per paragraph. */
-  // summary: [
-  //   "Google Cloud Certified Associate Cloud Engineer and Information Systems graduate (Universitas Andalas, GPA 3.82/4.00) with hands-on experience deploying and running web applications on Google Cloud and Linux servers using Docker, Nginx, Cloudflare, Cloud Run and Cloud SQL. Taught core Google Cloud services as a Cloud Computing teaching assistant, with a backend foundation in Node.js, Express and TypeScript.",
-  //   "Looking for an entry-level Cloud Engineer role that bridges development, deployment and operations.",
-  // ],
-  summary : [
-    "Hello, World!"
+  summary: [
+    "I build backend services and full-stack web applications, and configure the server and cloud environments that run them in production.",
+    "As a Google Cloud Certified Associate Cloud Engineer and former Cloud Computing teaching assistant, I enjoy the work that connects application code to deployment and operations. I'm currently deepening my skills in backend engineering and DevOps, and looking for an entry-level Cloud or Backend role.",
   ],
   /** Default meta description, also used for Open Graph and Twitter cards. */
   description:

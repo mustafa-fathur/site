@@ -7,6 +7,8 @@ export const icons = {
   moon: { stroke: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>' },
   menu: { stroke: '<path d="M3 6h18M3 12h18M3 18h18"/>' },
   close: { stroke: '<path d="M18 6 6 18M6 6l12 12"/>' },
+  chevronLeft: { stroke: '<path d="m15 18-6-6 6-6"/>' },
+  chevronRight: { stroke: '<path d="m9 18 6-6-6-6"/>' },
   copy: {
     stroke:
       '<rect x="8" y="8" width="14" height="14" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
@@ -14,6 +16,14 @@ export const icons = {
   mail: {
     stroke:
       '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/>',
+  },
+  globe: {
+    stroke:
+      '<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/>',
+  },
+  smartphone: {
+    stroke:
+      '<rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/>',
   },
   instagram: {
     stroke:

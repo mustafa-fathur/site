@@ -1,0 +1,19 @@
+---
+import PageHeader from "../components/PageHeader.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import { projects } from "../data/projects";
+import Base from "../layouts/Base.astro";
+---
+
+<Base
+  title="Projects"
+  description="Engineering and cloud projects by Mustafa Fathur Rahman: academic and government systems, backend APIs and deployments on Google Cloud and Linux servers."
+>
+  <PageHeader title="Projects">
+    Web applications, backend systems and cloud deployments I have built and shipped.
+  </PageHeader>
+
+  <div class="mt-8 grid gap-3 sm:grid-cols-2">
+    {projects.map((item) => <ProjectCard item={item} id={item.slug} />)}
+  </div>
+</Base>

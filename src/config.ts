@@ -7,9 +7,8 @@
  * Production origin of this site, without a trailing slash, e.g. "https://example.com".
  * Enables the canonical link and the absolute URLs Open Graph requires. While
  * empty, those tags are left out rather than pointing at the wrong host.
- * TODO: set before deploying.
  */
-export const SITE_URL: string = "";
+export const SITE_URL: string = "https://portfolio.fathur.site";
 
 /**
  * Origin of the blog, without a trailing slash. Posts link to

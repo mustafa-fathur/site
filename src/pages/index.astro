@@ -1,14 +1,14 @@
 ---
 import { Image } from "astro:assets";
-import avatar from "../assets/avatar.png";
+import avatar from "../assets/profile.jpeg"
 import CompanyLogo from "../components/CompanyLogo.astro";
 import Icon from "../components/Icon.astro";
 // import PostCard from "../components/PostCard.astro";
 import Section from "../components/Section.astro";
-import WorkCard from "../components/WorkCard.astro";
+import ProjectCard from "../components/ProjectCard.astro";
 // import { latestPosts } from "../data/posts";
 import { awards, education, experience, links, profile, skills } from "../data/profile";
-import { featuredWork } from "../data/work";
+import { featuredProjects } from "../data/projects";
 import Base from "../layouts/Base.astro";
 import { brandIcon } from "../lib/brand-icons";
 import { link } from "../lib/ui";
@@ -69,20 +69,76 @@ const contacts = [links.email, links.linkedin, links.github];
     </ul>
   </section>
 
-  {/* 3. Selected Works: image-only tiles */}
-  <Section title="Selected Works">
-    <ul class="grid grid-cols-2 gap-2 sm:grid-cols-3">
-      {
-        featuredWork.map((item) => (
-          <li>
-            <WorkCard item={item} variant="tile" />
-          </li>
-        ))
-      }
-    </ul>
-    <p class="mt-5">
-      <a href="/work" class={link}>View all work</a>
-    </p>
+  {/* 3. Selected Projects: single-project slider */}
+  <Section title="Selected Projects">
+    <div
+      data-project-slider
+      role="region"
+      aria-roledescription="carousel"
+      aria-label="Selected Projects"
+      class="relative"
+    >
+      <div class="overflow-hidden rounded-xl">
+        <ul
+          data-project-slider-track
+          class="flex transition-transform duration-300 ease-out motion-reduce:transition-none"
+        >
+          {
+            featuredProjects.map((item, index) => (
+              <li
+                data-project-slide={index}
+                aria-hidden={index === 0 ? "false" : "true"}
+                class="w-full shrink-0"
+              >
+                <ProjectCard item={item} variant="tile" />
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      {/* Previous / Next slide arrows */}
+      <button
+        type="button"
+        data-project-slider-prev
+        aria-label="Previous project"
+        class="inline-flex size-9 items-center justify-center rounded-full border border-card-line bg-background/90 text-muted-foreground-1 shadow-sm backdrop-blur-xs transition-colors hover:bg-muted-hover hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-primary absolute top-1/2 left-2.5 z-10 -translate-y-1/2 md:-left-12"
+      >
+        <Icon name="chevronLeft" class="size-4 shrink-0" />
+      </button>
+
+      <button
+        type="button"
+        data-project-slider-next
+        aria-label="Next project"
+        class="inline-flex size-9 items-center justify-center rounded-full border border-card-line bg-background/90 text-muted-foreground-1 shadow-sm backdrop-blur-xs transition-colors hover:bg-muted-hover hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-primary absolute top-1/2 right-2.5 z-10 -translate-y-1/2 md:-right-12"
+      >
+        <Icon name="chevronRight" class="size-4 shrink-0" />
+      </button>
+    </div>
+
+    <div class="mt-4 flex items-center justify-between gap-4">
+      <a href="/projects" class={link}>View all projects</a>
+
+      <div class="flex items-center gap-1.5" role="group" aria-label="Choose project slide">
+        {
+          featuredProjects.map((item, index) => (
+            <button
+              type="button"
+              data-project-slider-dot={index}
+              aria-label={`Show ${item.title} (${index + 1} of ${featuredProjects.length})`}
+              aria-current={index === 0 ? "true" : "false"}
+              class:list={[
+                "h-1.5 rounded-full transition-all duration-200",
+                index === 0
+                  ? "w-4 bg-foreground"
+                  : "w-1.5 bg-muted-foreground-1/35 hover:bg-muted-foreground-1/60",
+              ]}
+            />
+          ))
+        }
+      </div>
+    </div>
   </Section>
 
   {/* 4. Skills: label column, items as an inline list */}
@@ -244,3 +300,97 @@ const contacts = [links.email, links.linkedin, links.github];
     */
   }
 </Base>
+
+<script>
+  function initProjectSlider() {
+    document.querySelectorAll<HTMLElement>("[data-project-slider]").forEach((slider) => {
+      if (slider.dataset.sliderBound === "true") return;
+      slider.dataset.sliderBound = "true";
+
+      const section = slider.closest("section") ?? slider;
+      const track = slider.querySelector<HTMLElement>("[data-project-slider-track]");
+      const slides = Array.from(slider.querySelectorAll<HTMLElement>("[data-project-slide]"));
+      const prevBtn = slider.querySelector<HTMLButtonElement>("[data-project-slider-prev]");
+      const nextBtn = slider.querySelector<HTMLButtonElement>("[data-project-slider-next]");
+      const dots = Array.from(section.querySelectorAll<HTMLButtonElement>("[data-project-slider-dot]"));
+
+      if (!track || slides.length === 0) return;
+
+      let currentIndex = 0;
+      const total = slides.length;
+
+      const goTo = (index: number) => {
+        currentIndex = ((index % total) + total) % total;
+        track.style.transform = `translate3d(-${currentIndex * 100}%, 0, 0)`;
+
+        slides.forEach((slide, i) => {
+          const active = i === currentIndex;
+          slide.setAttribute("aria-hidden", String(!active));
+          const trigger = slide.querySelector<HTMLButtonElement>("[data-project-modal-open]");
+          if (trigger) trigger.tabIndex = active ? 0 : -1;
+        });
+
+        dots.forEach((dot, i) => {
+          const active = i === currentIndex;
+          dot.setAttribute("aria-current", String(active));
+          dot.classList.toggle("w-4", active);
+          dot.classList.toggle("bg-foreground", active);
+          dot.classList.toggle("w-1.5", !active);
+          dot.classList.toggle("bg-muted-foreground-1/35", !active);
+          dot.classList.toggle("hover:bg-muted-foreground-1/60", !active);
+        });
+      };
+
+      goTo(0);
+
+      prevBtn?.addEventListener("click", () => goTo(currentIndex - 1));
+      nextBtn?.addEventListener("click", () => goTo(currentIndex + 1));
+
+      dots.forEach((dot, i) => {
+        dot.addEventListener("click", () => goTo(i));
+      });
+
+      slider.addEventListener("keydown", (event) => {
+        if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          goTo(currentIndex - 1);
+        } else if (event.key === "ArrowRight") {
+          event.preventDefault();
+          goTo(currentIndex + 1);
+        }
+      });
+
+      let startX = 0;
+      let startY = 0;
+      let swiping = false;
+
+      track.addEventListener(
+        "touchstart",
+        (event) => {
+          if (event.touches.length !== 1) return;
+          startX = event.touches[0].clientX;
+          startY = event.touches[0].clientY;
+          swiping = true;
+        },
+        { passive: true },
+      );
+
+      track.addEventListener(
+        "touchend",
+        (event) => {
+          if (!swiping || event.changedTouches.length !== 1) return;
+          swiping = false;
+          const dx = event.changedTouches[0].clientX - startX;
+          const dy = event.changedTouches[0].clientY - startY;
+          if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+            goTo(dx < 0 ? currentIndex + 1 : currentIndex - 1);
+          }
+        },
+        { passive: true },
+      );
+    });
+  }
+
+  initProjectSlider();
+  document.addEventListener("astro:page-load", initProjectSlider);
+</script>

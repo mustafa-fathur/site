@@ -44,7 +44,7 @@
 
   /*
    * The navbar floats over the page: sticky, 4rem tall including the gap above
-   * it. Anything scrolled to by its id (`/#contact`, `/work#<slug>`) stops a
+   * it. Anything scrolled to by its id (`/#contact`, `/projects#<slug>`) stops a
    * little below the bar instead of underneath it.
    */
   main [id] {

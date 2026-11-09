@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { SITE_URL } from "../config";
 
-const routes = ["/", "/work"];
+const routes = ["/", "/projects"];
 
 export const GET: APIRoute = ({ url }) => {
   const origin = SITE_URL || url.origin;

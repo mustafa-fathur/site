@@ -1,0 +1,419 @@
+---
+import type { ProjectItem } from "../data/projects";
+import Icon from "./Icon.astro";
+
+interface Props {
+  item: ProjectItem;
+}
+
+const { item } = Astro.props;
+const preview = item.devicePreview;
+const hasMobile = Boolean(preview?.web && preview?.mobile);
+const hasDualWeb = Boolean(preview?.web && preview?.webSecondary);
+const hasMultiRepos = Boolean(item.repos && item.repos.length > 1);
+const fit = item.image.endsWith(".svg") ? "object-contain" : "object-cover";
+
+const iconLink =
+  "inline-flex size-8 items-center justify-center rounded-full text-muted-foreground-1 transition-colors hover:bg-muted-hover hover:text-foreground focus:bg-muted-focus focus:text-foreground";
+---
+
+<dialog
+  id={`project-modal-${item.slug}`}
+  data-project-modal={item.slug}
+  aria-labelledby={`project-modal-title-${item.slug}`}
+  class="m-auto w-[calc(100vw-1.5rem)] max-w-4xl overflow-hidden rounded-2xl border border-card-line bg-background p-0 text-foreground shadow-xl open:flex open:flex-col"
+>
+  <div class="flex max-h-[90dvh] flex-col overflow-hidden">
+    {/* Modal Header: Left (GitHub + Web + optional Mobile toggle) · Center (App Title) · Right (Close) */}
+    <header class="grid grid-cols-3 items-center border-b border-card-line px-4 py-2 sm:px-5">
+      <div class="flex items-center gap-1">
+        {
+          hasMultiRepos ? (
+            <div class="relative" data-repo-menu>
+              <button
+                type="button"
+                data-repo-menu-toggle
+                aria-expanded="false"
+                aria-haspopup="menu"
+                class={iconLink}
+                title="GitHub repositories"
+              >
+                <Icon name="github" class="size-4 shrink-0" />
+                <span class="sr-only">GitHub repositories for {item.title}</span>
+              </button>
+              <div
+                role="menu"
+                data-repo-menu-panel
+                class="hidden absolute inset-s-0 top-full z-30 mt-1.5 min-w-44 rounded-xl border border-card-line bg-background p-1 shadow-lg"
+              >
+                {item.repos!.map((repo) => (
+                  <a
+                    role="menuitem"
+                    href={repo.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="flex items-center justify-between gap-x-3 rounded-lg px-2.5 py-1.5 text-xs font-medium text-muted-foreground-1 transition-colors hover:bg-muted-hover hover:text-foreground"
+                  >
+                    <span>{repo.label}</span>
+                    <span aria-hidden="true" class="text-muted-foreground-2">↗</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          ) : (
+            item.repo && (
+              <a
+                href={item.repo}
+                target="_blank"
+                rel="noopener noreferrer"
+                class={iconLink}
+                title="GitHub repository"
+              >
+                <Icon name="github" class="size-4 shrink-0" />
+                <span class="sr-only">Repository of {item.title} (opens in a new tab)</span>
+              </a>
+            )
+          )
+        }
+        {
+          item.url && (
+            <a
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class={iconLink}
+              title="Live website"
+            >
+              <Icon name="globe" class="size-4 shrink-0" />
+              <span class="sr-only">Live website of {item.title} (opens in a new tab)</span>
+            </a>
+          )
+        }
+        {
+          hasMobile && (
+            <button
+              type="button"
+              data-mobile-view-toggle
+              aria-pressed="false"
+              class={iconLink}
+              title="Switch to mobile view"
+              aria-label={`Toggle mobile view for ${item.title}`}
+            >
+              <Icon name="smartphone" class="size-4 shrink-0" />
+            </button>
+          )
+        }
+        {
+          hasDualWeb && (
+            <div class="ms-1 inline-flex items-center rounded-full border border-card-line p-0.5 text-[11px] font-medium">
+              <button
+                type="button"
+                data-dual-view-btn="0"
+                aria-pressed="true"
+                class="rounded-full bg-muted-hover px-2 py-0.5 text-foreground transition-colors"
+              >
+                BookMySpace
+              </button>
+              <button
+                type="button"
+                data-dual-view-btn="1"
+                aria-pressed="false"
+                class="rounded-full px-2 py-0.5 text-muted-foreground-1 transition-colors hover:text-foreground"
+              >
+                FTIRoom
+              </button>
+            </div>
+          )
+        }
+      </div>
+
+      <h3
+        id={`project-modal-title-${item.slug}`}
+        class="truncate text-center text-sm font-medium text-foreground"
+      >
+        {item.title}
+      </h3>
+
+      <div class="flex items-center justify-end">
+        <button
+          type="button"
+          data-project-modal-close
+          aria-label={`Close ${item.title} preview`}
+          class={iconLink}
+        >
+          <Icon name="close" class="size-4 shrink-0" />
+        </button>
+      </div>
+    </header>
+
+    {/* Modal Stage: Flush directly below the toolbar with consistent 16:9 size */}
+    <div class="relative aspect-16/9 w-full overflow-hidden bg-background-1">
+      {
+        hasMobile ? (
+          <>
+            {/* Default Web View: edge-to-edge below toolbar */}
+            <div data-modal-view="web" class="size-full">
+              <img
+                src={preview!.web}
+                alt={`${item.title} web preview`}
+                width="1897"
+                height="1078"
+                loading="lazy"
+                decoding="async"
+                class="size-full object-cover object-top"
+              />
+            </div>
+
+            {/* Toggled Mobile View: centered inside the same 16:9 stage with mobile frame */}
+            <div
+              data-modal-view="mobile"
+              class="hidden size-full items-center justify-center"
+            >
+              <div class="w-[24%] rounded-[1.75rem] border border-card-line bg-background p-2 shadow-sm">
+                <div class="mx-auto mb-1.5 h-1 w-8 rounded-full bg-muted-foreground-1/30" />
+                <div class="relative aspect-9/18 w-full overflow-hidden rounded-[1.25rem] border border-card-line/60 bg-background-1">
+                  <img
+                    src={preview!.mobile}
+                    alt={`${item.title} mobile preview`}
+                    width="1080"
+                    height="2400"
+                    loading="lazy"
+                    decoding="async"
+                    class="absolute -top-[5%] -left-[1%] h-[110.5%] w-[103%] max-w-none object-fill"
+                  />
+                </div>
+              </div>
+            </div>
+          </>
+        ) : hasDualWeb ? (
+          <>
+            {/* BookMySpace View: edge-to-edge below toolbar */}
+            <div data-dual-panel="0" class="size-full overflow-hidden">
+              <img
+                src={preview!.web}
+                alt="BookMySpace landing page"
+                width="1611"
+                height="906"
+                loading="lazy"
+                decoding="async"
+                class="size-full object-cover object-top"
+              />
+            </div>
+
+            {/* FTIRoom View: edge-to-edge below toolbar */}
+            <div data-dual-panel="1" class="hidden size-full overflow-hidden">
+              <img
+                src={preview!.webSecondary}
+                alt="FTIRoom landing page"
+                width="1920"
+                height="1080"
+                loading="lazy"
+                decoding="async"
+                class="size-full object-cover object-top"
+              />
+            </div>
+          </>
+        ) : (
+          /* Single Web View: straight below toolbar, edge-to-edge */
+          <img
+            src={preview?.web ?? item.image}
+            alt={`Preview of ${item.title}`}
+            width="1920"
+            height="1080"
+            loading="lazy"
+            decoding="async"
+            class:list={["size-full object-top", preview?.web ? "object-cover" : fit]}
+          />
+        )
+      }
+    </div>
+  </div>
+</dialog>
+
+<style>
+  dialog[data-project-modal]::backdrop {
+    background-color: rgb(0 0 0 / 0.65);
+    backdrop-filter: blur(2px);
+    animation: modal-backdrop-in 260ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  dialog[data-project-modal][data-closing="true"]::backdrop {
+    animation: modal-backdrop-out 200ms cubic-bezier(0.4, 0, 1, 1) forwards;
+  }
+
+  @keyframes modal-backdrop-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes modal-backdrop-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    dialog[data-project-modal]::backdrop,
+    dialog[data-project-modal][data-closing="true"]::backdrop {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  function initProjectModals() {
+    const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    document.querySelectorAll<HTMLButtonElement>("[data-project-modal-open]").forEach((trigger) => {
+      if (trigger.dataset.modalBound === "true") return;
+      trigger.dataset.modalBound = "true";
+
+      const slug = trigger.dataset.projectModalOpen;
+      const dialog = document.querySelector<HTMLDialogElement>(`dialog[data-project-modal="${slug}"]`);
+      if (!dialog) return;
+
+      // Optional multi-repo dropdown on the single GitHub icon
+      const repoMenu = dialog.querySelector<HTMLElement>("[data-repo-menu]");
+      const repoToggle = repoMenu?.querySelector<HTMLButtonElement>("[data-repo-menu-toggle]");
+      const repoPanel = repoMenu?.querySelector<HTMLElement>("[data-repo-menu-panel]");
+
+      const closeRepoMenu = () => {
+        if (!repoToggle || !repoPanel) return;
+        repoToggle.setAttribute("aria-expanded", "false");
+        repoPanel.classList.add("hidden");
+      };
+
+      repoToggle?.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const open = repoToggle.getAttribute("aria-expanded") === "true";
+        repoToggle.setAttribute("aria-expanded", String(!open));
+        repoPanel?.classList.toggle("hidden", open);
+      });
+
+      // Optional mobile view toggle (NeoCentral SI)
+      const mobileToggle = dialog.querySelector<HTMLButtonElement>("[data-mobile-view-toggle]");
+      const webView = dialog.querySelector<HTMLElement>('[data-modal-view="web"]');
+      const mobileView = dialog.querySelector<HTMLElement>('[data-modal-view="mobile"]');
+
+      const setMobileMode = (mobile: boolean) => {
+        if (!mobileToggle || !webView || !mobileView) return;
+        mobileToggle.setAttribute("aria-pressed", String(mobile));
+        mobileToggle.title = mobile ? "Switch to web view" : "Switch to mobile view";
+        mobileToggle.classList.toggle("bg-muted-hover", mobile);
+        mobileToggle.classList.toggle("text-foreground", mobile);
+        webView.classList.toggle("hidden", mobile);
+        mobileView.classList.toggle("hidden", !mobile);
+        mobileView.classList.toggle("flex", mobile);
+      };
+
+      mobileToggle?.addEventListener("click", () => {
+        const isMobile = mobileToggle.getAttribute("aria-pressed") === "true";
+        setMobileMode(!isMobile);
+      });
+
+      // Optional dual web view toggle (BookMySpace // FTIRoom)
+      const dualBtns = dialog.querySelectorAll<HTMLButtonElement>("[data-dual-view-btn]");
+      const dualPanels = dialog.querySelectorAll<HTMLElement>("[data-dual-panel]");
+      dualBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const target = btn.dataset.dualViewBtn;
+          dualBtns.forEach((other) => {
+            const active = other.dataset.dualViewBtn === target;
+            other.setAttribute("aria-pressed", String(active));
+            other.classList.toggle("bg-muted-hover", active);
+            other.classList.toggle("text-foreground", active);
+            other.classList.toggle("text-muted-foreground-1", !active);
+          });
+          dualPanels.forEach((panel) => {
+            panel.classList.toggle("hidden", panel.dataset.dualPanel !== target);
+          });
+        });
+      });
+
+      const getTransformFromTrigger = () => {
+        const cardRect = trigger.getBoundingClientRect();
+        const modalRect = dialog.getBoundingClientRect();
+        if (!cardRect.width || !modalRect.width) return "scale(0.92)";
+
+        const dx = cardRect.left + cardRect.width / 2 - (modalRect.left + modalRect.width / 2);
+        const dy = cardRect.top + cardRect.height / 2 - (modalRect.top + modalRect.height / 2);
+        const scale = Math.max(0.22, Math.min(0.65, cardRect.width / modalRect.width));
+        return `translate3d(${dx}px, ${dy}px, 0) scale(${scale})`;
+      };
+
+      const closeWithAnimation = () => {
+        if (!dialog.open || dialog.dataset.closing === "true") return;
+        closeRepoMenu();
+        if (reducedMotion()) {
+          dialog.close();
+          return;
+        }
+
+        dialog.dataset.closing = "true";
+        const fromCard = getTransformFromTrigger();
+        const anim = dialog.animate(
+          [
+            { transform: "translate3d(0, 0, 0) scale(1)", opacity: 1 },
+            { transform: fromCard, opacity: 0 },
+          ],
+          { duration: 200, easing: "cubic-bezier(0.4, 0, 1, 1)" },
+        );
+
+        anim.onfinish = () => {
+          delete dialog.dataset.closing;
+          dialog.close();
+        };
+      };
+
+      trigger.addEventListener("click", () => {
+        delete dialog.dataset.closing;
+        dialog.showModal();
+        document.body.classList.add("overflow-hidden");
+
+        if (!reducedMotion()) {
+          const fromCard = getTransformFromTrigger();
+          dialog.animate(
+            [
+              { transform: fromCard, opacity: 0 },
+              { transform: "translate3d(0, 0, 0) scale(1)", opacity: 1 },
+            ],
+            { duration: 280, easing: "cubic-bezier(0.22, 1, 0.36, 1)" },
+          );
+        }
+      });
+
+      dialog.addEventListener("close", () => {
+        delete dialog.dataset.closing;
+        closeRepoMenu();
+        setMobileMode(false);
+        document.body.classList.remove("overflow-hidden");
+      });
+
+      dialog.addEventListener("cancel", (event) => {
+        if (reducedMotion()) return;
+        event.preventDefault();
+        closeWithAnimation();
+      });
+
+      dialog.addEventListener("click", (event) => {
+        if (repoMenu && !repoMenu.contains(event.target as Node)) closeRepoMenu();
+        if (event.target === dialog) closeWithAnimation();
+      });
+
+      dialog.querySelector<HTMLButtonElement>("[data-project-modal-close]")?.addEventListener("click", () => {
+        closeWithAnimation();
+      });
+    });
+  }
+
+  initProjectModals();
+  document.addEventListener("astro:page-load", initProjectModals);
+</script>
+

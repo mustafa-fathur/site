@@ -22,8 +22,8 @@ const under = (base: string) => pathname === base || pathname.startsWith(`${base
 
 const nav = [
   { label: "About", href: "/", current: home },
-  { label: "Work", href: "/work", current: under("/work") },
-  { label: "Blog", href: "#blog", current: under("/blog") },
+  { label: "Projects", href: "/projects", current: under("/projects") },
+  // { label: "Blog", href: "/blog", current: under("/blog") },
 ];
 
 // Left border on mobile, bottom border from `md`. The block ships
@@ -51,7 +51,7 @@ const linkIdle = "border-transparent text-navbar-nav-foreground/80";
     </div>
 
     {/* Actions: one group for every breakpoint, moved after the links from `md`. */}
-    <div class="flex items-center gap-1 md:order-4 md:ms-4">
+    <div class="flex items-center gap-1 md:order-4 md:ms-1">
       <ThemeToggle />
 
       <div class="md:hidden">

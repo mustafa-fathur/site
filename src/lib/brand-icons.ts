@@ -7,9 +7,11 @@
  * "Cloud Run"). The keys are the item names in `src/data/profile.ts`.
  */
 import {
+  siClaude,
   siCloudflare,
   siDocker,
   siExpress,
+  siFlask,
   siFlutter,
   siGit,
   siGithub,
@@ -19,7 +21,9 @@ import {
   siJavascript,
   siLaravel,
   siLinux,
+  siLivewire,
   siMysql,
+  siNetlify,
   siNextdotjs,
   siNginx,
   siNodedotjs,
@@ -28,6 +32,8 @@ import {
   siPython,
   siReact,
   siRedis,
+  siSupabase,
+  siTailwindcss,
   siTypescript,
 } from "simple-icons";
 
@@ -55,9 +61,18 @@ const icons: Record<string, { path: string } | undefined> = {
   "Inertia.js": siInertia,
   Flutter: siFlutter,
   React: siReact,
+  "React.js": siReact,
+  "React Native": siReact,
   "Next.js": siNextdotjs,
   MySQL: siMysql,
   PostgreSQL: siPostgresql,
+  Flask: siFlask,
+  TailwindCSS: siTailwindcss,
+  "Tailwind CSS": siTailwindcss,
+  Livewire: siLivewire,
+  Claude: siClaude,
+  Netlify: siNetlify,
+  Supabase: siSupabase,
 };
 
 /** SVG path (24×24 viewBox) of the skill's brand icon, if it has one. */
