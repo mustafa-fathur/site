@@ -8,7 +8,7 @@
  * Enables the canonical link and the absolute URLs Open Graph requires. While
  * empty, those tags are left out rather than pointing at the wrong host.
  */
-export const SITE_URL: string = "https://portfolio.fathur.site";
+export const SITE_URL: string = "https://fathur.site";
 
 /**
  * Origin of the blog, without a trailing slash. Posts link to
